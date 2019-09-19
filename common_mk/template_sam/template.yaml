@@ -1,0 +1,211 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sample_func
+
+  SAM Template for sample_func
+
+
+Parameters:
+  DeployEnv:
+    Type: String
+    AllowedValues:
+      - prod
+      - dev
+      - local
+    Default: local
+  ReadCapacityUnits:
+    Type: Number
+    Default: 2
+  WriteCapacityUnits:
+    Type: Number
+    Default: 2
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  UserPool:   # Don't change this name if you use this
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: "TestPool"
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+        UnusedAccountValidityDays: 0
+      AutoVerifiedAttributes:
+        - email
+      MfaConfiguration: 'OFF'
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: true
+      Schema:
+      - Name: email
+        AttributeDataType: String
+        DeveloperOnlyAttribute: false
+        Mutable: true
+        Required: true
+      - Name: test
+        AttributeDataType: String
+        DeveloperOnlyAttribute: false
+        Mutable: true
+        Required: false
+
+  UserPoolAppClient:   # Don't change this name if you use this
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: app_client
+      ExplicitAuthFlows:
+        - USER_PASSWORD_AUTH
+      GenerateSecret: false
+      UserPoolId: !Ref UserPool
+
+  ApiGateway:   # Don't change this name if you use this
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: SampleApi
+      StageName: !Ref DeployEnv
+      #Auth:  # if you want to use CognitoAuthorizer, uncomment this section
+      #  DefaultAuthorizer: CognitoAuthorizer
+      #  Authorizers:
+      #    CognitoAuthorizer:
+      #      UserPoolArn: !GetAtt UserPool.Arn
+      DefinitionBody:
+        swagger: "2.0"
+        schemes:
+          - "https"
+        paths:
+          /rest_api:
+            post:
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri: !Join [ '' , [ 'arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/' , !GetAtt SampleLambdaFunction.Arn , '/invocations' ] ]
+                passthroughBehavior: "when_no_match"
+                httpMethod: "POST"
+                type: "aws_proxy"
+            options:
+              consumes:
+              - "application/json"
+              produces:
+              - "application/json"
+              responses:
+                "200": # ここは文字列で定義する
+                  description: "200 response"
+                  schema:
+                    $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: "string"
+                    Access-Control-Allow-Methods:
+                      type: "string"
+                    Access-Control-Allow-Headers:
+                      type: "string"
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'*'"
+                      method.response.header.Access-Control-Allow-Headers: "'*'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                requestTemplates:
+                  application/json: "{\"statusCode\": 200}"
+                passthroughBehavior: "when_no_match"
+                type: "mock"
+
+
+  SampleLambdaFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: sample_func-__LAMBDA_RUNTIME__/
+      Handler: app.lambda_handler
+      Description: Handle requests for sample
+      Timeout: 20
+      MemorySize: 128
+      Runtime: __LAMBDA_RUNTIME__  # python3.7/go1.x/nodejs10.x
+      Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /rest_api
+            Method: POST
+      Policies:
+        - AWSLambdaExecute # Managed Policy
+        - Version: '2012-10-17' # Policy Document
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:DeleteItem
+                - dynamodb:Scan
+                - dynamodb:PutItem
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:UpdateItem
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: '*'
+      Environment:
+        Variables:   # variables can be read as environmental value in the lambda function
+          DEPLOY_ENV: !Ref DeployEnv     # Don't edit
+          TABLE_NAME1: "sampleTable"     # modify here according to DynamoDB table (TableName in Properties)
+          #TABLE_NAME2: "sampleTable2"    # If you create more tables, add entries for them
+
+  SampleTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "sampleTable"
+      AttributeDefinitions:
+        - AttributeName: column1
+          AttributeType: S
+        - AttributeName: column2
+          AttributeType: S
+        - AttributeName: column3
+          AttributeType: N
+      KeySchema:
+        - AttributeName: column1
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: !Ref 'ReadCapacityUnits'
+        WriteCapacityUnits: !Ref 'WriteCapacityUnits'
+      GlobalSecondaryIndexes:
+        - IndexName: column2-index
+          KeySchema:
+          - AttributeName: column2
+            KeyType: HASH
+          - AttributeName: column3
+            KeyType: RANGE
+          Projection:
+            NonKeyAttributes:
+              - txid
+            ProjectionType: INCLUDE
+          ProvisionedThroughput:
+            ReadCapacityUnits: !Ref 'ReadCapacityUnits'
+            WriteCapacityUnits: !Ref 'WriteCapacityUnits'
+
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  UserPoolId:
+    Description: "UserPool ID"
+    Value: !Ref UserPool
+  UserPoolAppClientId:
+    Description: "App Client ID"
+    Value: !Ref UserPoolAppClient
+  ApiGateway:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/"
+  SampleLambdaFunction:
+    Description: "Lambda Function ARN"
+    Value: !GetAtt SampleLambdaFunction.Arn
+  SampleLambdaFunctionIamRole:
+    Description: "Implicit IAM Role created for SampleLambdaFunction"
+    Value: !GetAtt SampleLambdaFunctionRole.Arn

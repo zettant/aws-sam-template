@@ -1,0 +1,3 @@
+PROFILE_DEV=yyyyy
+PROFILE_PROD=xxxxxx
+PROFILE_LOCAL=sam-local
