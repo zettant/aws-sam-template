@@ -60,7 +60,7 @@ def overwrite_json(filepath, stack, profile, env_name):
         elif key == "ApiGateway":
             env_output["base_url"] = value+env_name
         elif re.search("Function$", key):
-            env_output.setdefault("lambda", list()).append(value)
+            env_output.setdefault("lambda", dict())[key] = value
 
     print("--------------------------")
     pprint.pprint(env_output)

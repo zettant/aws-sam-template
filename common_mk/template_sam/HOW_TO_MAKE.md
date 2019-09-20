@@ -50,7 +50,7 @@ make lambda-test
 
 
 
-##DynamoDBをローカルに立ち上げる
+## DynamoDBをローカルに立ち上げる
 
 ローカルでのテストのために、DockerのDynamoDBを起動する。
 
@@ -112,7 +112,7 @@ DEPLOY_ENV=dev make deploy
 
 
 
-####テストコード（pytest）を実行する
+#### テストコード（pytest）を実行する
 
 ローカルのテストと同じtests/unit/の下のテストコード群を、aws環境向けに実行する。
 
