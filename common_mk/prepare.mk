@@ -6,7 +6,8 @@ prepare-python:
 	    bash -c "\
 	        . ${CURRENT_DIR}/venv/bin/activate && \
 	        mkdir -p ${CURRENT_DIR}/${func}/pymodules && \
-	        pip install -r requirements.txt -t ${CURRENT_DIR}/${func}/pymodules"; \
+	        cd ${CURRENT_DIR}/${func} && \
+	        pip install -r requirements.txt -t ./pymodules"; \
 	fi
 
 
