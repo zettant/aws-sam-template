@@ -10,6 +10,7 @@ SAMを用いてAWSシステムを記述、管理する際の各種コマンド�
 * AWSアカウントは、開発用と本番用で別々のアカウントにする
 * ```aws configure```コマンドで、~/.awsディレクトリの下にconfigとcredentialsファイルが作成されていること
   * SAMのローカルテスト環境を動かすために、sam-localという名前のダミープロファイル（中身はなんでもいい）を作成しておくこと
+    * configには、```output = json```を記載しておく
   * 開発用（DEPLOY_ENV=dev）と本番用（DEPLOY_ENV=prod）のデプロイ用のプロファイルも作成しておくこと
   * gitでコードを管理するなら、プロファイル名はチームで統一しておいた方が良い
 * 現時点では、Python3のLambda実行環境のみを想定しているが、今後NodeやGoのテンプレートも増やしたい
@@ -36,7 +37,7 @@ stackとはAWS CloudFormationのstackのことで、一連の機能群のこと�
 
 1. 下記コマンドを実行する
 
-   ```
+   ```bash
    make stack name=sample runtime=python3.7
    ```
 
@@ -51,7 +52,7 @@ stackとはAWS CloudFormationのstackのことで、一連の機能群のこと�
 作成されたstackディレクトリの下にある、mk/ディレクトリのparams.mkの中身を編集する
 
 * ```makefile
-  PROFILE_DEV=zettantdev
+  PROFILE_DEV=yyyyyy
   PROFILE_PROD=xxxxxx
   PROFILE_LOCAL=sam-local
   ```
@@ -84,7 +85,7 @@ common_mk/params.mkとenv.jsonで環境変数DEPLOY_DEVの値とawsプロファ�
 
 * common_mk/
 
-  * SAMを用いたテスト、デプロイなどを行うための基本機能を記述したMakefile群を格納している
+  * SAMおよびCloudFormationを用いたテスト、デプロイなどを行うための基本機能を記述したMakefile群を格納している
   * params.mkとcustom.mkは案件ごとに書き換えが必要（[こちら](./common_mk/README.md)を参照）
 
 * common_mk/template_sam/

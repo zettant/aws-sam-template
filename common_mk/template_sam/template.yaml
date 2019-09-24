@@ -156,6 +156,7 @@ Resources:
           DEPLOY_ENV: !Ref DeployEnv     # Don't edit
           TABLE_NAME1: "sampleTable"     # modify here according to DynamoDB table (TableName in Properties)
           #TABLE_NAME2: "sampleTable2"    # If you create more tables, add entries for them
+          S3BUCKET_NAME1: "samplebucket-0123456789abcdef"  # modify here according to S3 bucket name (BucketName in Properties)
 
   SampleTable:
     Type: AWS::DynamoDB::Table
@@ -189,6 +190,18 @@ Resources:
             ReadCapacityUnits: !Ref 'ReadCapacityUnits'
             WriteCapacityUnits: !Ref 'WriteCapacityUnits'
 
+  TestS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "samplebucket-0123456789abcdef"
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      #DeletionPolicy: Retain
+
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -209,3 +222,6 @@ Outputs:
   SampleLambdaFunctionIamRole:
     Description: "Implicit IAM Role created for SampleLambdaFunction"
     Value: !GetAtt SampleLambdaFunctionRole.Arn
+  TestS3Bucket:
+    Description: "S3 Bucket"
+    Value: !Ref TestS3Bucket

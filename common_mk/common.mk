@@ -4,11 +4,10 @@ TOOL_DIR=${ROOT_DIR}/tools
 
 S3_BUCKET="sam-stack-deployment"
 
-DYNAMO_PORT=8001
-DOCKER_NETWORK=lambda-local
-
 STACK_NAME := $(shell echo `pwd` | awk -F "/" '{ print $$NF }' | sed -e "s/_/-/g")
 
+DOCKER_NETWORK=lambda-local
+AWSCLI=aws
 
 ifeq ($(DEPLOY_ENV),prod)
 	PROFILE=${PROFILE_PROD}
@@ -17,10 +16,11 @@ else ifeq ($(DEPLOY_ENV),dev)
 else
 	PROFILE=${PROFILE_LOCAL}
 	DEPLOY_ENV=local
+	AWSCLI=awslocal
 endif
 
-include ${ROOT_DIR}/common_mk/dynamodb.mk
 include ${ROOT_DIR}/common_mk/lambda_api.mk
 include ${ROOT_DIR}/common_mk/prepare.mk
+include ${ROOT_DIR}/common_mk/aws_local.mk
 include ${ROOT_DIR}/common_mk/deploy.mk
 include ${ROOT_DIR}/common_mk/test.mk

@@ -61,6 +61,8 @@ def overwrite_json(filepath, stack, profile, env_name):
             env_output["base_url"] = value+env_name
         elif re.search("Function$", key):
             env_output.setdefault("lambda", dict())[key] = value
+        elif re.search("S3Bucket", key):
+            env_output.setdefault("s3", dict())[key] = value
 
     print("--------------------------")
     pprint.pprint(env_output)

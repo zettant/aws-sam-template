@@ -24,9 +24,11 @@ common_mkディレクトリに配置される下記ファイルは、すべて�
   - Makefile群で共通して使うパラメータ等を定義する
 * deploy.mk
   - aws (cloudformation) へのデプロイ機能を定義
-* dynamodb.mk
-  - DynamoDBのローカルテスト用の機能を定義
+* aws_local.mk
+  - localstackを用いたローカルテスト用の機能を定義
 * lambda_api.mk
   - LambdaおよびAPI Gatewayのローカルテスト用の機能を定義
 * prepare.mk
   - 仮想環境など環境構築機能を定義
+* test.mk
+  - pytestを用いたLambda+API GWのユニットテストを行うための機能を定義
