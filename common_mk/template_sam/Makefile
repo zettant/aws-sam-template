@@ -23,5 +23,9 @@ api-test:
 	make api-test-unit
 
 
+create-s3-local:
+	make create-s3bucket-local bucket=${bucket_name}
+
+
 dist-clean:
 	make distclean-python func=sample_func-__LAMBDA_RUNTIME__

@@ -4,22 +4,22 @@ include common_mk/common.mk
 
 prepare:
 	make prepare-sam
-	make create-s3bucket
+	make prepare-localstack
+	make prepare-mongodb
 
 
 prepare-sam:
-	bash -c "\
+	@bash -c "\
 	  python3 -mvenv venv && \
 	  . venv/bin/activate && \
 	  pip install -r requirements.txt"
-	@-docker pull amazon/dynamodb-local
 	@-docker network create ${DOCKER_NETWORK}
 
+prepare-localstack:
+	@-docker pull localstack/localstack
 
-create-s3bucket:
-	bash -c "\
-	    . ${ROOT_DIR}/venv/bin/activate && \
-	    aws s3 mb s3://${S3_BUCKET} --profile ${PROFILE}"
+prepare-mongodb:
+	@-docker pull mongo
 
 
 stack:

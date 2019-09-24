@@ -50,25 +50,31 @@ make lambda-test
 
 
 
-## DynamoDBをローカルに立ち上げる
+## localstackを立ち上げる
 
-ローカルでのテストのために、DockerのDynamoDBを起動する。
+ローカルでのテストのために、localstackのDockerコンテナを起動する。この時にtemplate.yamlに従ってDynamoDBのテーブルも作成する。
 
 ```bash
-make start-dynamodb
+make start-localstack
 ```
 
 Dockerコンテナを終了する場合は、以下のようにする。
 
 ```bash
-make stop-dynamodb
+make stop-localstack
+```
+
+S3を使いたい場合は、別途S3バケットをlocalstack上に作成する必要がある。以下のコマンドで作成できる。
+
+```bash
+make create-s3bucket-local bucket=<BUCKET_NAME>
 ```
 
 
 
 ## API GW+Lambdaをローカルに立ち上げる
 
-専用のDockerコンテナを立ち上げる。フォアグラウンドで立ち上がるようになっているので、別ターミナルで実行する。
+専用のDockerコンテナを立ち上げる。フォアグラウンドで立ち上がるようになっているので、別ターミナルで実行する。localstackが立っているので無駄ではあるが、samの枠組みを利用した方が簡単である。
 
 ```bash
 make start-api
@@ -92,6 +98,8 @@ make api-test
 
 なお、CloudFormationのstack名には、ディレクトリ名が適用される。
 
+
+
 #### パッケージ作成
 
 ```bash
@@ -99,6 +107,8 @@ DEPLOY_ENV=dev make package
 ```
 
 パッケージは、S3にアップロードされる。この後に実行するデプロイでは、CloudFormationがS3からパッケージを取得して、各機能をデプロイする。
+
+※ localstackはCloudFormationも模擬できるはずなのだが、うまく動かない。（S3へのパッケージのアップロードで失敗してしまう）
 
 
 

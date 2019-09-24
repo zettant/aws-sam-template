@@ -8,10 +8,20 @@ import boto3
 if "TABLE_NAME1" not in os.environ:
     raise Exception("No env for DynamoDB tables")
 
+if "S3BUCKET_NAME1" not in os.environ:
+    raise Exception("No env for S3Bucket name")
+
 if "DEPLOY_ENV" not in os.environ or os.environ["DEPLOY_ENV"] == "local":
-    dynamodb = boto3.resource('dynamodb', endpoint_url="http://dynamodb:8000")
+    dynamodb = boto3.resource('dynamodb', endpoint_url="http://localstack:4569")
+    s3 = boto3.resource('s3', endpoint_url="http://localstack:4572")
+    #sqs = boto3.resource('sqs', endpoint_url="http://localstack:4576")
+    #ses = boto3.resource('sqs', endpoint_url="http://localstack:4579")
+    #import pymongo
+    #mongodb = pymongo.MongoClient("mongodb://dev-mongo:27017")
+
 else:
     dynamodb = boto3.resource('dynamodb')
+    s3 = boto3.resource('s3')
 table = dynamodb.Table(os.environ["TABLE_NAME1"])
 
 
@@ -26,6 +36,9 @@ def lambda_handler(event, context):
             "column3": record["column3"],
         }
     )
+
+    obj = s3.Object(os.environ["S3BUCKET_NAME1"], "test.json")
+    obj.put(Body=event["body"])
 
     return {
         'statusCode': 200,
