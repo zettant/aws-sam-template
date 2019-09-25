@@ -14,6 +14,9 @@ Parameters:
       - dev
       - local
     Default: local
+  TestBucketName:
+    Type: String
+    Default: "samplebucket-0123456789abcdefxxx"
   ReadCapacityUnits:
     Type: Number
     Default: 2
@@ -70,53 +73,45 @@ Resources:
     Properties:
       Name: SampleApi
       StageName: !Ref DeployEnv
+      Cors: "'*'"
       #Auth:  # if you want to use CognitoAuthorizer, uncomment this section
       #  DefaultAuthorizer: CognitoAuthorizer
       #  Authorizers:
       #    CognitoAuthorizer:
       #      UserPoolArn: !GetAtt UserPool.Arn
-      DefinitionBody:
-        swagger: "2.0"
-        schemes:
-          - "https"
-        paths:
-          /rest_api:
-            post:
-              responses: {}
-              x-amazon-apigateway-integration:
-                uri: !Join [ '' , [ 'arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/' , !GetAtt SampleLambdaFunction.Arn , '/invocations' ] ]
-                passthroughBehavior: "when_no_match"
-                httpMethod: "POST"
-                type: "aws_proxy"
-            options:
-              consumes:
-              - "application/json"
-              produces:
-              - "application/json"
-              responses:
-                "200": # ここは文字列で定義する
-                  description: "200 response"
-                  schema:
-                    $ref: "#/definitions/Empty"
-                  headers:
-                    Access-Control-Allow-Origin:
-                      type: "string"
-                    Access-Control-Allow-Methods:
-                      type: "string"
-                    Access-Control-Allow-Headers:
-                      type: "string"
-              x-amazon-apigateway-integration:
-                responses:
-                  default:
-                    statusCode: "200"
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: "'*'"
-                      method.response.header.Access-Control-Allow-Headers: "'*'"
-                      method.response.header.Access-Control-Allow-Origin: "'*'"
-                requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
-                passthroughBehavior: "when_no_match"
-                type: "mock"
+      Auth: # This is global setting. If you want to use API Key for all paths, set ApiKeyRequired to true. To overwrite this setting, specify individual setting in function parts.
+        ApiKeyRequired: false
+
+  SampleApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    DependsOn:
+      - ApiGateway
+      - ApiGatewayStage
+    Properties:
+      Name: sample-api-key
+      Enabled: true
+      StageKeys:
+        - RestApiId: !Ref ApiGateway
+          StageName: !Ref DeployEnv
+
+  SampleApiUsagePlan:   # Usage plan is mandatory for ApiKey!!!
+    Type: AWS::ApiGateway::UsagePlan
+    DependsOn: ApiGateway
+    Properties:
+      ApiStages:
+      - ApiId: !Ref ApiGateway
+        Stage: !Ref ApiGatewayStage
+      UsagePlanName: sample-api-usage-plan
+
+  SampleApiUsagePlanKey:   # Usage plan key is mandatory for ApiKey!!!
+    Type: AWS::ApiGateway::UsagePlanKey
+    DependsOn:
+      - SampleApiKey
+      - SampleApiUsagePlan
+    Properties:
+      KeyId: !Ref SampleApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref SampleApiUsagePlan
 
 
   SampleLambdaFunction:
@@ -136,6 +131,8 @@ Resources:
             RestApiId: !Ref ApiGateway
             Path: /rest_api
             Method: POST
+            Auth: # This is individual setting. Uncomment this element if you don't want to overwrite
+              ApiKeyRequired: true
       Policies:
         - AWSLambdaExecute # Managed Policy
         - Version: '2012-10-17' # Policy Document
@@ -148,6 +145,9 @@ Resources:
                 - dynamodb:GetItem
                 - dynamodb:Query
                 - dynamodb:UpdateItem
+                - s3:PutObject
+                - s3:GetObject
+                - s3:DeleteObject
                 - logs:CreateLogStream
                 - logs:PutLogEvents
               Resource: '*'
@@ -156,7 +156,7 @@ Resources:
           DEPLOY_ENV: !Ref DeployEnv     # Don't edit
           TABLE_NAME1: "sampleTable"     # modify here according to DynamoDB table (TableName in Properties)
           #TABLE_NAME2: "sampleTable2"    # If you create more tables, add entries for them
-          S3BUCKET_NAME1: "samplebucket-0123456789abcdef"  # modify here according to S3 bucket name (BucketName in Properties)
+          S3BUCKET_NAME1: !Ref TestBucketName
 
   SampleTable:
     Type: AWS::DynamoDB::Table
@@ -193,7 +193,7 @@ Resources:
   TestS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: "samplebucket-0123456789abcdef"
+      BucketName: !Ref TestBucketName
       AccessControl: Private
       PublicAccessBlockConfiguration:
         BlockPublicAcls: True
@@ -216,6 +216,9 @@ Outputs:
   ApiGateway:
     Description: "API Gateway endpoint URL"
     Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/"
+  SampleApiKey:
+    Description: "API key for the API Gateway resource"
+    Value: !Ref SampleApiKey
   SampleLambdaFunction:
     Description: "Lambda Function ARN"
     Value: !GetAtt SampleLambdaFunction.Arn

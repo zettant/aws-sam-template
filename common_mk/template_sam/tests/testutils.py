@@ -13,8 +13,8 @@ def get_env_values(env_name):
     return jsondat.get(env_name, None)
 
 
-def http_post(path='', parameter={}):
-    headers = {u'Content-Type': u'application/json'}
+def http_post(path='', parameter={}, headers={}):
+    headers[u'Content-Type'] = u'application/json'
     if TOKEN is not None:
         headers[u'Authorization'] = u'Bearer %s' % TOKEN
 

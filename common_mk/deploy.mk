@@ -9,9 +9,9 @@ package:
 
 
 deploy:
-	@$(SHELL) -c "\
+	$(SHELL) -c "\
 	    . ${ROOT_DIR}/venv/bin/activate && \
-	    ${AWSCLI} cloudformation deploy --debug --profile ${PROFILE} --template-file packaged.yaml --stack-name ${STACK_NAME} --capabilities CAPABILITY_IAM --parameter-overrides DeployEnv=${DEPLOY_ENV}"
+	    ${AWSCLI} cloudformation deploy --profile ${PROFILE} --template-file packaged.yaml --stack-name ${STACK_NAME} --capabilities CAPABILITY_IAM --parameter-overrides DeployEnv=${DEPLOY_ENV}"
 	make update-env
 
 

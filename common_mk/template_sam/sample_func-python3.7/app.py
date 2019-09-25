@@ -40,6 +40,8 @@ def lambda_handler(event, context):
     obj = s3.Object(os.environ["S3BUCKET_NAME1"], "test.json")
     obj.put(Body=event["body"])
 
+    obj.delete()
+
     return {
         'statusCode': 200,
         'body': json.dumps({"message": "test message"})

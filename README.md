@@ -3,6 +3,8 @@ AWS SAM (Serverless Architecture Model)の開発支援ツール
 
 SAMを用いてAWSシステムを記述、管理する際の各種コマンド実行手順をMakefileの形にまとめ、雛形として使えるようにした。
 
+開発を進める際にSAMのテンプレートを編集する必要があるが、書き方は[ここ](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction)と[ここ](https://d1.awsstatic.com/webinars/jp/pdf/services/20190814_AWS-Blackbelt_SAM_rev.pdf)と[ここ](https://github.com/awslabs/serverless-application-model/tree/master/examples)を参照するといい。他のところにも情報は散らばっているが、多分一番参考になる。
+
 
 
 ## 前提・想定・前準備
