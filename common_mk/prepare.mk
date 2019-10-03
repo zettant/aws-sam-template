@@ -14,3 +14,13 @@ prepare-python:
 distclean-python:
 	rm -rf ${CURRENT_DIR}/venv
 	rm -rf ${CURRENT_DIR}/${func}/pymodules
+
+build-go:
+	if [[ ! -f ${CURRENT_DIR}/${func} ]]; then \
+		cd ${CURRENT_DIR}/${func} && GOOS=linux GOARCH=amd64 go mod init ${func}; \
+	fi
+	cd ${CURRENT_DIR}/${func} && GOOS=linux GOARCH=amd64 go build *.go
+
+distclean-go:
+	cd ${CURRENT_DIR}/${func} && rm -f go.mod go.sum
+

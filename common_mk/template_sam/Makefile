@@ -7,7 +7,8 @@ include mk/custom.mk
 #--- don't edit above
 
 prepare:
-	make prepare-python func=sample_func-__LAMBDA_RUNTIME__
+	make prepare-python func=sample_func-python3.7
+	make build-go func=sample_func-go1.x
 	bash -c "\
 	    cd tests && \
 	    python3 -mvenv venv && \
@@ -17,6 +18,7 @@ prepare:
 
 lambda-test:
 	make lambda-local-test func=SampleLambdaFunction
+	make lambda-local-test func=SampleLambdaFunctionGo
 
 
 api-test:
@@ -28,4 +30,5 @@ create-s3-local:
 
 
 dist-clean:
-	make distclean-python func=sample_func-__LAMBDA_RUNTIME__
+	make distclean-python func=sample_func-python3.7
+	make distclean-go func=sample_func-go1.x

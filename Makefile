@@ -23,13 +23,5 @@ prepare-mongodb:
 
 
 stack:
-	@if [[ -z "${runtime}" ]]; then \
-	    echo "** runtime is mandatory! (python3.7|go1.x|nodejs10.x)"; \
-	    exit 1; \
-	fi
 	mkdir ${name}-stack
 	cp -RP common_mk/template_sam/* ${name}-stack
-	cd ${name}-stack && \
-	sed -i -e 's/__LAMBDA_RUNTIME__/${runtime}/g' template.yaml && \
-	sed -i -e 's/__LAMBDA_RUNTIME__/${runtime}/g' Makefile && \
-	rm -f template.yaml-e Makefile-e

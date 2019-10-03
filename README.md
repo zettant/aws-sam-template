@@ -40,12 +40,12 @@ stackとはAWS CloudFormationのstackのことで、一連の機能群のこと�
 1. 下記コマンドを実行する
 
    ```bash
-   make stack name=sample runtime=python3.7
+   make stack name=sample
    ```
 
    このコマンドで、sample-stackという名前のstackが生成され、sample-stackディレクトリが生成される。今後このディレクトリ配下のファイルを編集していく。
    
-   現時点では、Python3のLambda実行環境のみを想定しているが、今後NodeやGoのテンプレートも増やしたい。
+   現時点では、Python3とGo1.xのLambda実行環境を想定したテンプレートが含まれている。
 
 
 
@@ -117,12 +117,15 @@ some-stackというスタックを作ったと仮定する。以下のファイ�
 * some-stack/event.json
   * Lambdaのローカルテスト時の入力情報を記述したもの
   * サンプルとして置いてあるが、適宜変更、追加する必要がある
-* some-stack/sample_func-xxx/app.py
-* sample_funcのディレクトリはLambda用のディレクトリで、xxxのところは、python3.7/go1.x/nodejs10.xのいずれかが入り、runtimeの種類を表している。サンプル用なのでディレクトリ名は適宜変更すれば良い
+* some-stack/sample_func-python3.7/app.py
+  * サンプル用なのでディレクトリ名は適宜変更すれば良い
   * app.pyにLambdaのエントリポイント（lambda_handler関数）が定義されている
     * エントリポイントはtemplate.yamlに設定されているが、特に問題がない限り変更する必要はない
 * some-stack/sample_func-python3.7/requirements.txt
-  - Lambda関数で使うpythonモジュール群を列挙したファイル (runtimeがpythonの場合のみ)
+  - Lambda関数で使うpythonモジュール群を列挙したファイル
+* some-stack/sample_func-go1.x/main.go
+  * サンプル用なのでディレクトリ名は適宜変更すれば良い
+  * Lambda関数で使うgoのメインソース。適宜ソースファイルは追加、修正すればよい
 * some-stack/tests/unit/*_tester.py
   * ユニットテスト用のコード
 

@@ -117,12 +117,12 @@ Resources:
   SampleLambdaFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: sample_func-__LAMBDA_RUNTIME__/
+      CodeUri: sample_func-python3.7/
       Handler: app.lambda_handler
       Description: Handle requests for sample
       Timeout: 20
       MemorySize: 128
-      Runtime: __LAMBDA_RUNTIME__  # python3.7/go1.x/nodejs10.x
+      Runtime: python3.7  # python3.7/go1.x/nodejs10.x
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
       Events:
         Api:
@@ -157,6 +157,44 @@ Resources:
           TABLE_NAME1: "sampleTable"     # modify here according to DynamoDB table (TableName in Properties)
           #TABLE_NAME2: "sampleTable2"    # If you create more tables, add entries for them
           S3BUCKET_NAME1: !Ref TestBucketName
+
+  SampleLambdaFunctionGo:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: sample_func-go1.x/
+      Handler: main
+      Description: Handle requests for sample
+      Timeout: 20
+      MemorySize: 128
+      Runtime: go1.x  # python3.7/go1.x/nodejs10.x
+      Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /rest_api_go
+            Method: POST
+            Auth: # This is individual setting. Uncomment this element if you don't want to overwrite
+              ApiKeyRequired: true
+      Policies:
+        - AWSLambdaExecute # Managed Policy
+        - Version: '2012-10-17' # Policy Document
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:DeleteItem
+                - dynamodb:Scan
+                - dynamodb:PutItem
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:UpdateItem
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: '*'
+      Environment:
+        Variables:   # variables can be read as environmental value in the lambda function
+          DEPLOY_ENV: !Ref DeployEnv     # Don't edit
 
   SampleTable:
     Type: AWS::DynamoDB::Table
@@ -225,6 +263,12 @@ Outputs:
   SampleLambdaFunctionIamRole:
     Description: "Implicit IAM Role created for SampleLambdaFunction"
     Value: !GetAtt SampleLambdaFunctionRole.Arn
+  SampleLambdaFunctionGo:
+    Description: "Lambda Function ARN"
+    Value: !GetAtt SampleLambdaFunctionGo.Arn
+  SampleLambdaFunctionGoIamRole:
+    Description: "Implicit IAM Role created for SampleLambdaFunctionGo"
+    Value: !GetAtt SampleLambdaFunctionGoRole.Arn
   TestS3Bucket:
     Description: "S3 Bucket"
     Value: !Ref TestS3Bucket
