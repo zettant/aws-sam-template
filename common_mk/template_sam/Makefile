@@ -1,7 +1,8 @@
 CURRENT_DIR := $(shell pwd)
+S3_TEMPLATE_BUCKET=
 
 include mk/params.mk
-include ../common_mk/common.mk
+include ../aws-sam-template/common_mk/common.mk
 include mk/custom.mk
 
 #--- don't edit above
