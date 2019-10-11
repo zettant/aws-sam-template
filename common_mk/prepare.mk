@@ -22,5 +22,5 @@ build-go:
 	cd ${CURRENT_DIR}/${func} && GOOS=linux GOARCH=amd64 go build *.go
 
 distclean-go:
-	cd ${CURRENT_DIR}/${func} && rm -f go.mod go.sum
+	cd ${CURRENT_DIR}/${func} && rm -f go.mod go.sum main
 
