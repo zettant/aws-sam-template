@@ -17,7 +17,7 @@ distclean-python:
 
 build-go:
 	if [[ ! -f ${CURRENT_DIR}/${func} ]]; then \
-		cd ${CURRENT_DIR}/${func} && GOOS=linux GOARCH=amd64 go mod init ${func}; \
+		cd ${CURRENT_DIR}/${func} && GOOS=linux GOARCH=amd64 go mod init main; \
 	fi
 	cd ${CURRENT_DIR}/${func} && GOOS=linux GOARCH=amd64 go build *.go
 
