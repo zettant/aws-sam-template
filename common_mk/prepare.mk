@@ -19,7 +19,7 @@ build-go:
 	if [[ ! -f ${CURRENT_DIR}/${func} ]]; then \
 		cd ${CURRENT_DIR}/${func} && GOOS=linux GOARCH=amd64 go mod init main; \
 	fi
-	cd ${CURRENT_DIR}/${func} && GOOS=linux GOARCH=amd64 go build *.go
+	cd ${CURRENT_DIR}/${func} && GOOS=linux GOARCH=amd64 go build -o main *.go
 
 distclean-go:
 	cd ${CURRENT_DIR}/${func} && rm -f go.mod go.sum main

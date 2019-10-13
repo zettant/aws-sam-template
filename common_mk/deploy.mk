@@ -1,13 +1,13 @@
 
 package:
 	if [[ -z `. ${SAMDIR}/venv/bin/activate && ${AWSCLI} s3 ls --profile ${PROFILE} | grep ${S3_TEMPLATE_BUCKET}` ]]; then \
-		@-$(SHELL) -c "\
+		@$(SHELL) -c "\
 		    . ${SAMDIR}/venv/bin/activate && \
-		    ${AWSCLI} s3 mb s3://${S3_BUCKET} --profile ${PROFILE}"; \
+		    ${AWSCLI} s3 mb s3://${S3_TEMPLATE_BUCKET} --profile ${PROFILE}"; \
 	fi	
-	@-$(SHELL) -c "\
+	@$(SHELL) -c "\
 	    . ${SAMDIR}/venv/bin/activate && \
-	    ${AWSCLI} cloudformation package --profile ${PROFILE} --template-file template.yaml --output-template-file packaged.yaml --s3-bucket ${S3_BUCKET}"
+	    ${AWSCLI} cloudformation package --profile ${PROFILE} --template-file template.yaml --output-template-file packaged.yaml --s3-bucket ${S3_TEMPLATE_BUCKET}"
 
 
 deploy:
@@ -26,7 +26,7 @@ update-env:
 delete-stack:
 	@# ******* 危険 (productionでは使わない)*******
 	if [[ "${DEPLOY_ENV}" != "prod" ]]; then \
-	    bash -c "\
+	    $(SHELL) -c "\
 	        . ${SAMDIR}/venv/bin/activate && \
 	        ${AWSCLI} cloudformation delete-stack --profile ${PROFILE} --stack-name ${STACK_NAME}"; \
 	fi
