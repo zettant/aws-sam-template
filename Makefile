@@ -1,4 +1,4 @@
-DOCKER_NETWORK=lambda-local
+include common_mk/param.mk
 
 prepare:
 	cp common_mk/Makefile ..
