@@ -53,10 +53,10 @@ def overwrite_json(filepath, stack, profile, env_name):
     for v in target_stack:
         key = v["OutputKey"]
         value = v["OutputValue"]
-        if key == "UserPoolId":
-            env_output["user_pool_id"] = value
-        elif key == "UserPoolAppClientId":
-            env_output["client_id"] = value
+        if re.search("UserPoolId", key):
+            env_output.setdefault("user_pool_id", dict())[key] = value
+        elif re.search("UserPoolAppClientId", key):
+            env_output.setdefault("client_id", dict())[key] = value
         elif key == "ApiGateway":
             env_output["base_url"] = value+env_name
         elif re.search("ApiKey", key):
@@ -66,6 +66,18 @@ def overwrite_json(filepath, stack, profile, env_name):
             env_output.setdefault("lambda", dict())[key] = value
         elif re.search("S3Bucket", key):
             env_output.setdefault("s3", dict())[key] = value
+        elif re.search("VpcId", key):
+            env_output.setdefault("vpc", dict())[key] = value
+        elif re.search("Subnet", key):
+            env_output.setdefault("subnet", dict())[key] = value
+        elif re.search("PrivateIP", key):
+            env_output.setdefault("ipaddress", dict())[key] = value
+        elif re.search("SecurityGroup", key):
+            env_output.setdefault("securitygroup", dict())[key] = value
+
+    for k in env_output.keys():
+        if len(env_output[k]) == 1 and isinstance(env_output[k], dict):
+            env_output[k] = list(env_output[k].values())[0]
 
     print("--------------------------")
     pprint.pprint(env_output)
