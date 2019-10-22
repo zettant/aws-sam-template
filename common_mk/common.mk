@@ -16,6 +16,7 @@ else
 	AWSCLI=awslocal
 endif
 
+include ${SAMDIR}/common_mk/param.mk
 include ${SAMDIR}/common_mk/lambda_api.mk
 include ${SAMDIR}/common_mk/prepare.mk
 include ${SAMDIR}/common_mk/aws_local.mk

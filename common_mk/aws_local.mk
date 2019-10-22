@@ -6,18 +6,19 @@ stop-mongodb:
 	docker stop dev-mongo
 	docker rm dev-mongo
 
-
-start-localstack:
-	if [[ -n `docker ps -f name=localstack | grep -v CONTAINER` ]]; then \
-	    make stop-localstack; \
-	fi
-	docker run -p 4567-4582:4567-4582 -p 8080:8080 --net=${DOCKER_NETWORK} --name localstack -d localstack/localstack
+prepare-dynamodb-config:
 	-$(SHELL) -c "\
 	    . ${SAMDIR}/venv/bin/activate && \
 	    rm -rf ${CURRENT_DIR}/dynamodb/ && \
 	    mkdir -p ${CURRENT_DIR}/dynamodb/ && \
 	    cd ${CURRENT_DIR}/dynamodb/ && \
 	    python ${TOOL_DIR}/yj_converter_dynamodb.py -y ${CURRENT_DIR}/template.yaml"
+
+start-localstack:
+	if [[ -n `docker ps -f name=localstack | grep -v CONTAINER` ]]; then \
+	    make stop-localstack; \
+	fi
+	docker run -p 4567-4582:4567-4582 -p 8080:8080 --net=${DOCKER_NETWORK} --name localstack -d localstack/localstack
 	@for file in `find ${CURRENT_DIR}/dynamodb -name "*.json"`; do \
 	    $(SHELL) -c ". ${SAMDIR}/venv/bin/activate && ${AWSCLI} dynamodb create-table --profile ${PROFILE} --cli-input-json file://$${file}"; \
 	done

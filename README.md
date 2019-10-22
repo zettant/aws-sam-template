@@ -39,9 +39,9 @@ SAMを用いてAWSシステムを記述、管理する際の各種コマンド�
    make
    ```
 
-   この結果、sample_projディレクトリにMakefileが生成（コピーされる）。もし、すでにMakefileがsample_projに存在する場合は、既存Makefileにaws-sam-template/common_mk/Makefileの内容を手動で追記する必要がある。
+   この結果、sample_projディレクトリにMakefileが生成（コピー）され、aws-sam-template/に必要なモジュールがインストールされる。もし、すでにMakefileがsample_projに存在する場合は、既存Makefileにaws-sam-template/common_mk/Makefileの内容を手動で追記する必要がある。
 
-   なお、***aws-sam-template/*というディレクトリ名は変更してはならない（内部のツールがそのディレクトリ名を前提としているため）**
+   なお、**内部のツールがそのディレクトリ名を前提としているため、*aws-sam-template/*というディレクトリ名は変更してはならない。**
 
    
 

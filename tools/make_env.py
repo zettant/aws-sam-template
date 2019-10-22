@@ -79,6 +79,10 @@ def overwrite_json(filepath, stack, profile, env_name):
         if len(env_output[k]) == 1 and isinstance(env_output[k], dict):
             env_output[k] = list(env_output[k].values())[0]
 
+    for k in env_output.keys():
+        if len(env_output[k]) == 1 and isinstance(env_output[k], dict):
+            env_output[k] = list(env_output[k].values())[0]
+
     print("--------------------------")
     pprint.pprint(env_output)
     print("--------------------------")
