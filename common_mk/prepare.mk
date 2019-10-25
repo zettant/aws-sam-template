@@ -16,7 +16,7 @@ distclean-python:
 	rm -rf ${CURRENT_DIR}/${func}/pymodules
 
 build-go:
-	if [[ ! -f ${CURRENT_DIR}/${func} ]]; then \
+	if [[ ! -f ${CURRENT_DIR}/${func}/go.mod ]]; then \
 		cd ${CURRENT_DIR}/${func} && GOOS=linux GOARCH=amd64 go mod init main; \
 	fi
 	cd ${CURRENT_DIR}/${func} && GOOS=linux GOARCH=amd64 go build -o main *.go
