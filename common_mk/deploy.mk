@@ -1,13 +1,13 @@
 
 package:
-	if [[ -z `. ${SAMDIR}/venv/bin/activate && ${AWSCLI} s3 ls --profile ${PROFILE} | grep ${S3_TEMPLATE_BUCKET}` ]]; then \
-		@$(SHELL) -c "\
+	if [[ -z `. ${SAMDIR}/venv/bin/activate && ${AWSCLI} s3 ls --profile ${PROFILE} | grep ${S3_TEMPLATE_BUCKET}-${PROFILE}` ]]; then \
+		$(SHELL) -c "\
 		    . ${SAMDIR}/venv/bin/activate && \
-		    ${AWSCLI} s3 mb s3://${S3_TEMPLATE_BUCKET} --profile ${PROFILE}"; \
+		    ${AWSCLI} s3 mb s3://${S3_TEMPLATE_BUCKET}-${PROFILE} --profile ${PROFILE}"; \
 	fi	
 	@$(SHELL) -c "\
 	    . ${SAMDIR}/venv/bin/activate && \
-	    ${AWSCLI} cloudformation package --profile ${PROFILE} --template-file template.yaml --output-template-file packaged.yaml --s3-bucket ${S3_TEMPLATE_BUCKET}"
+	    ${AWSCLI} cloudformation package --profile ${PROFILE} --template-file template.yaml --output-template-file packaged.yaml --s3-bucket ${S3_TEMPLATE_BUCKET}-${PROFILE}"
 
 
 deploy:
