@@ -1,5 +1,7 @@
-
 package:
+	@$(eval AWS_ACCOUNT_ID := $(shell aws sts get-caller-identity --profile $(PROFILE) | jq -r ."Account"))
+	@$(eval STACK_NAME_LCASE := $(shell echo $(STACK_NAME) | tr A-Z a-z))
+	@$(eval S3_TEMPLATE_BUCKET := $(AWS_ACCOUNT_ID)-$(STACK_NAME_LCASE)-sam)
 	if [[ -z `. ${SAMDIR}/venv/bin/activate && ${AWSCLI} s3 ls --profile ${PROFILE} | grep ${S3_TEMPLATE_BUCKET}-${PROFILE}` ]]; then \
 		$(SHELL) -c "\
 		    . ${SAMDIR}/venv/bin/activate && \
