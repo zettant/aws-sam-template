@@ -3,9 +3,6 @@
     "config:base",
     ":timezone(Asia/Tokyo)"
   ],
-  "pip_requirements": {
-    "fileMatch": ["requirements\.txt"]
-  },
   "assignees": ["quvox"],
   "patch": { "automerge": true },
   "minor": { "automerge": true },
