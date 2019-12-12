@@ -21,8 +21,9 @@ from argparse import ArgumentParser
 
 
 def parser():
-    usage = 'python {} [-e dev|prod] [-l LambdaFunctionName in env.json] [-a VAL_name] [-v value] [-d VAL_name] [--help]'.format(__file__)
+    usage = 'python {} [-f filepath] [-e dev|prod] [-l LambdaFunctionName in env.json] [-a VAL_name] [-v value] [-d VAL_name] [--help]'.format(__file__)
     argparser = ArgumentParser(usage=usage)
+    argparser.add_argument('-f', '--filepath', type=str, defualt="./env.json", help='file path of env.json')
     argparser.add_argument('-e', '--env', type=str, help='env name (dev/prod)')
     argparser.add_argument('-l', '--lambda_function', type=str, help='Lambda function name in env.json')
     argparser.add_argument('-a', '--add', type=str, help='add Environment valuable with this name')
@@ -73,7 +74,7 @@ if __name__ == '__main__':
         print("# -e and -l are mandatory!")
         sys.exit(1)
 
-    env_values = get_function_configuration(argresult.env, argresult.lambda_function)
+    env_values = get_function_configuration(argresult.env, argresult.lambda_function, argresult.filepath)
     if argresult.show:
         if env_values is not None:
             import pprint
@@ -92,9 +93,9 @@ if __name__ == '__main__':
             sys.exit(1)
         env_values[argresult.add] = argresult.value
 
-    resp = set_configuration(argresult.env, argresult.lambda_function, env_values)
-    print(resp['LastUpdateStatus'])
+    resp = set_configuration(argresult.env, argresult.lambda_function, env_values, argresult.filepath)
+    print("# result =", resp['LastUpdateStatus'])
 
-    env_values = get_function_configuration(argresult.env, argresult.lambda_function)
+    env_values = get_function_configuration(argresult.env, argresult.lambda_function, argresult.filepath)
     import pprint
     pprint.pprint(env_values)
