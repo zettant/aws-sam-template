@@ -1,5 +1,4 @@
 CURRENT_DIR := $(shell pwd)
-S3_TEMPLATE_BUCKET=
 
 include mk/params.mk
 include ../aws-sam-template/common_mk/common.mk
@@ -15,6 +14,11 @@ prepare:
 	    python3 -mvenv venv && \
 	    . venv/bin/activate && \
 	    pip install -r requirements.txt"
+	make update-source
+
+
+update-source:
+        echo "call this rule if you want to copy latest codes from somewhere"
 
 
 lambda-test:
