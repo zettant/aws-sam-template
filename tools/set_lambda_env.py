@@ -23,7 +23,7 @@ from argparse import ArgumentParser
 def parser():
     usage = 'python {} [-f filepath] [-e dev|prod] [-l LambdaFunctionName in env.json] [-a VAL_name] [-v value] [-d VAL_name] [--help]'.format(__file__)
     argparser = ArgumentParser(usage=usage)
-    argparser.add_argument('-f', '--filepath', type=str, defualt="./env.json", help='file path of env.json')
+    argparser.add_argument('-f', '--filepath', type=str, default="./env.json", help='file path of env.json')
     argparser.add_argument('-e', '--env', type=str, help='env name (dev/prod)')
     argparser.add_argument('-l', '--lambda_function', type=str, help='Lambda function name in env.json')
     argparser.add_argument('-a', '--add', type=str, help='add Environment valuable with this name')
