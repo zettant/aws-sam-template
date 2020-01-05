@@ -4,7 +4,7 @@ attrs==19.3.0
 aws-lambda-builders==0.6.0
 aws-sam-cli==0.39.0
 aws-sam-translator==1.19.1
-awscli==1.16.299
+awscli==1.16.310
 awscli-local==0.4
 binaryornot==0.4.4
 boto3==1.10.35
