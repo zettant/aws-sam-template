@@ -59,6 +59,8 @@ def overwrite_json(filepath, stack, profile, env_name):
             env_output.setdefault("client_id", dict())[key] = value
         elif key == "ApiGateway":
             env_output["base_url"] = value+env_name
+        elif key == "CloudFront":
+            env_output["cloudfront_url"] = value
         elif re.search("ApiKey", key):
             response = session.client('apigateway').get_api_key(apiKey=value, includeValue=True)
             env_output.setdefault("apikey", dict())[key] = response['value']
