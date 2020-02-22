@@ -57,6 +57,8 @@ def overwrite_json(filepath, stack, profile, env_name):
             env_output.setdefault("user_pool_id", dict())[key] = value
         elif re.search("UserPoolAppClientId", key):
             env_output.setdefault("client_id", dict())[key] = value
+        elif re.search("IdentityPool", key):
+            env_output.setdefault("identity_pool_id", dict())[key] = value
         elif key == "ApiGateway":
             env_output["base_url"] = value+env_name
         elif key == "CloudFront":
