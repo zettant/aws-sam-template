@@ -66,6 +66,9 @@ def overwrite_json(filepath, stack, profile, env_name):
         elif re.search("ApiKey", key):
             response = session.client('apigateway').get_api_key(apiKey=value, includeValue=True)
             env_output.setdefault("apikey", dict())[key] = response['value']
+        elif re.search("ApiGateway", key):
+            apiname = key.strip("ApiGateway").lower()
+            env_output["{}_url".format(apiname)] = value+env_name
         elif re.search("Function$", key):
             env_output.setdefault("lambda", dict())[key] = value
         elif re.search("S3Bucket", key):
