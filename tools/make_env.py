@@ -79,6 +79,8 @@ def overwrite_json(filepath, stack, profile, env_name):
             env_output.setdefault("subnet", dict())[key] = value
         elif re.search("PrivateIP", key):
             env_output.setdefault("ipaddress", dict())[key] = value
+        elif re.search("PublicIP", key):
+            env_output.setdefault("public_ipaddress", dict())[key] = value
         elif re.search("SecurityGroup", key):
             env_output.setdefault("securitygroup", dict())[key] = value
 
