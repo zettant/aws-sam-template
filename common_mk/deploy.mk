@@ -14,7 +14,7 @@ package:
 
 deploy:
 	@$(eval PACKAGE_YAML_SIZE := $(shell wc -c < packaged.yaml))
-	$(SHELL) -c "if [ ${PACKAGE_YAML_SIZE} -gt 51200 ]; then make deploys3; else make deployslocal; fi"
+	$(SHELL) -c "if [ ${PACKAGE_YAML_SIZE} -gt 51200 ]; then make deploys3; else make deploylocal; fi"
 
 
 deploylocal:
