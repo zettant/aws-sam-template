@@ -63,10 +63,10 @@ sample_proj/
 
 stackとはAWS CloudFormationのstackのことで、一連の機能群のことを指す。
 
-1. 環境準備でMakefileが生成されたディレクトリ（上記の例だとsample_proj/）で下記コマンドを実行する
+1. 環境準備でMakefileが生成されたディレクトリ（上記の例だとsample_proj/）で下記コマンドを実行する。（***注意：指定するstack名に '_' アンダーバーを使用してはいけない。S3作成に失敗する***）
 
    ```bash
-   make stack name=sample
+   make stack name=sample. 
    ```
 
    このコマンドで、sample-stackという名前のstackが生成され、sample-stackディレクトリが生成される。今後このディレクトリ配下のファイルを編集していく。
